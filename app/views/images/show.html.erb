@@ -1,0 +1,68 @@
+<div class="images_container">
+	<div class="original_image image_div hidden">
+		<div class="image">
+		</div>
+		<div class="text">
+			Original
+		</div>
+	</div>
+	<div class="large_image image_div hidden">
+		<div class="image">
+		</div>
+		<div class="text">
+			Large
+		</div>
+	</div>
+	<div class="medium_image image_div hidden">
+		<div class="image">
+		</div>
+		<div class="text">
+			Medium
+		</div>
+	</div>
+	<div class="small_image image_div hidden">
+		<div class="image">
+		</div>
+		<div class="text">
+			Small
+		</div>
+	</div>
+</div>
+<div class="clr"></div>
+<a href="<%=images_path%>" class="btn btn-primary back">Back</a>
+<%= javascript_tag do %>
+$(document).ready(function(){
+	if(!<%= @image.versions_created %>){
+		$(".back").addClass("hidden");
+		$("body").append('<div class="block_ui">Please wait....</div>');
+		polling_interval = setInterval(function(){
+			$.ajax({
+				url: "/images/<%= @image.id%>",
+				type: "get",
+				dataType: "json",
+				success: function(one,two,three){
+					if(one.image.versions_created){
+						clearInterval(polling_interval);
+						$("body").find(".block_ui").remove();
+						$(".image_div").removeClass("hidden");
+						$(".back").removeClass("hidden");
+						$(".original_image .image").html("<img src='" + one.image.original.url + "'>");
+						$(".large_image .image").html("<img src='" + one.image.large.url + "'>");
+						$(".medium_image .image").html("<img src='" + one.image.medium.url + "'>");
+						$(".small_image .image").html("<img src='" + one.image.small.url + "'>");
+					}
+				},
+				error: function(){
+
+				}
+			});
+		},2000);
+	}else{
+		$(".image_div").removeClass("hidden");
+		$(".original_image .image").html("<img src='<%= @image.file.url %>'>");
+		$(".large_image .image").html("<img src='<%= @image.file.large.url %>'>");
+		$(".medium_image .image").html("<img src='<%= @image.file.medium.url %>'>");
+		$(".small_image .image").html("<img src='<%= @image.file.small.url %>'>");
+	}
+});
+<% end %>

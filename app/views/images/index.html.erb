@@ -1,0 +1,16 @@
+<% @images.each do |image| %>
+	<div class="image_container">
+		<a href="<%= image_path(image) %>" class="thumbnail">
+		  <img src="<%= image.file.url %>" />
+		</a>
+	</div>
+<% end %>
+<div class="clr"></div>
+<%= form_for :image,url: :images do |f|%>
+	<div class="form-group">
+		<%= f.file_field :file ,class: "form-control"%>
+	</div>
+	<div class="form-group">
+		<%= f.submit "upload" ,class: "btn btn-primary"%>
+	</div>
+<% end %>
